@@ -1,2 +1,3 @@
-# replaybot-backend
-Manages the backend of a discord bot
+# This is all the logic of my Discord bot ReplayBot!
+
+[I will fill this out when filling it out makes significant difference]
