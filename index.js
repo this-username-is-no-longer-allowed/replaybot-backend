@@ -17,38 +17,23 @@ const client = new Client({
     ]
 });
 const Commands = {
-    echo: (interaction) => {
-        const input = interaction.options.getString('input');
-        return interaction.reply(`You said: ${input}`);
-    },
-    length: (interaction) => {
-        const input = interaction.options.getString('input');
-        return interaction.reply(`The length of "${input}" is **${input.length}** characters.`);
-    },
-    average: (interaction) => {
-        const input = interaction.options.getString('numbers');
-        const array = input.split(' ').map(Number).filter(n => !isNaN(n));
-        const sum = array.reduce((a, b) => a + b, 0);
-        const average = sum / array.length;
-        return interaction.reply(`The average of the numbers **${array.join(', ')}** is **${average.toFixed(2)}**.`);
-    },
-    parsefile: async (interaction) => {
+    goiseencode: async (interaction) => {
         const attachment = interaction.options.getAttachment('file');
 
         // Ensure MIME is text/plain (plaintext file)
         if (attachment.contentType && !attachment.contentType.startsWith('text/plain')) {
-            return interaction.reply(`The attached file \`${attachment.name}\` was not a plaintext file, ensure the extension is **.txt**.`);
+            return interaction.reply(`The attached file \`${attachment.name}\` was not a plaintext file, ensure the extension is \`.txt\`.`);
         }
 
         const fileUrl = attachment.url;
 
         try {
-            // Fetch the file content from Discarded CDN
+            // Fetch the file content from Discord's CDN
             const response = await fetch(fileUrl);
             const textContent = await response.text();
 
-            // Restrict output to 200 characters to prevent exceeding the 2000 character limit of Discord comments
-            return interaction.reply(`The attached file \`${attachment.name}\` has the content \n \`\`\`${textContent.substring(0, 200)}\`\`\``);
+            // For now just assume nothing can be done yet
+            return interaction.reply(`# Sorry, but this feature is not yet available.\n\nCheck later for better luck!`);
         } catch (error) {
             console.error('Error fetching file: ' + error);
             return interaction.reply({content: 'Failed to fetch file content from URL.', ephemeral: true});
@@ -56,39 +41,12 @@ const Commands = {
     },
 };
 
-const EchoCommandData = new SlashCommandBuilder()
-    .setName('echo')
-    .setDescription('Echoes back the input word.')
-    .addStringOption(option =>
-        option.setName('input')
-            .setDescription('The word to echo back.')
-            .setRequired(true)
-    )
-    .toJSON();
-const LengthCommandData = new SlashCommandBuilder()
-    .setName('length')
-    .setDescription('Returns the length of the input word.')
-    .addStringOption(option =>
-        option.setName('input')
-            .setDescription('The word to measure the length of.')
-            .setRequired(true)
-    )
-    .toJSON();
-const AverageCommandData = new SlashCommandBuilder()
-    .setName('average')
-    .setDescription('Calculates the average of numbers provided in a space-delimited list.')
-    .addStringOption(option =>
-        option.setName('numbers')
-            .setDescription('The numbers separated by spaces that are to be averaged.')
-            .setRequired(true)
-    )
-    .toJSON();
-const ReadfileCommandData = new SlashCommandBuilder()
-    .setName('parsefile')
-    .setDescription('Echoes the content of an attached plaintext file.')
+const GOISEEncodeCommandData = new SlashCommandBuilder()
+    .setName('goiseencode')
+    .setDescription('Accepts a replay code for GOISE and returns a video with the playback for that replay code.')
     .addAttachmentOption(option =>
         option.setName('file')
-            .setDescription('Attach the text file here.')
+            .setDescription('Replay code here.')
             .setRequired(true)
     )
     .toJSON();
@@ -100,7 +58,7 @@ async function registerCommands() {
         console.log('Started refreshing application (/) commands.');
         await rest.put(
             Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
-            { body: [EchoCommandData, LengthCommandData, AverageCommandData, ReadfileCommandData] },
+            { body: [GOISEEncodeCommandData] },
         );
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
