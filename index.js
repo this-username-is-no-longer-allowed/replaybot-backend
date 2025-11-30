@@ -2,8 +2,8 @@ const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require
 
 // --- Configuration ---
 // !!! REPLACE THESE PLACEHOLDERS WITH YOUR ACTUAL DETAILS !!!
-const BOT_TOKEN = 'YOUR_BOT_TOKEN';
-const CLIENT_ID = 'YOUR_CLIENT_ID';
+const BOT_TOKEN = 'MTQ0MzAyOTU3NjkyMDg1ODYzNA.GlGfgR.PfY9b5BlsVnG0cqVD8rZfO5uj6_YegqT2b2vI8';
+const CLIENT_ID = '1443029576920858634';
 // Optional: Use a specific Guild ID for faster updates during testing
 const GUILD_ID = 'YOUR_GUILD_ID';
 // ---------------------
@@ -82,3 +82,4 @@ await interaction.reply({ content: 'There was an error while executing this comm
 
 // Log in to Discord
 client.login(BOT_TOKEN);
+
