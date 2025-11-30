@@ -47,7 +47,8 @@ const Commands = {
             const response = await fetch(fileUrl);
             const textContent = await response.text();
 
-            return interaction.reply(`The attached file \`${attachment.name}\` has the content \n \`\`\`${textContent}\`\`\``);
+            // Restrict output to 200 characters to prevent exceeding the 2000 character limit of Discord comments
+            return interaction.reply(`The attached file \`${attachment.name}\` has the content \n \`\`\`${textContent.substring(0, 200)}\`\`\``);
         } catch (error) {
             console.error('Error fetching file: ' + error);
             return interaction.reply({content: 'Failed to fetch file content from URL.', ephemeral: true});
