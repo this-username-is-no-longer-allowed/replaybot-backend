@@ -1,5 +1,6 @@
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 const http = require('http'); // Import Node.js HTTP module
+const fetch = require('node-fetch'); // Import fetch
 
 // --- Configuration ---
 const BOT_TOKEN = process.env.BOT_TOKEN || ''; 
@@ -24,6 +25,13 @@ const Commands = {
         const input = interaction.options.getString('input');
         return interaction.reply(`The length of "${input}" is **${input.length}** characters.`);
     },
+    average: (interaction) => {
+        const input = interaction.options.getString('numbers');
+        const array = input.split(' ').map(Number).filter(n => !isNaN(n));
+        const sum = array.reduce((a, b) => a + b, 0);
+        const average = sum / array.length;
+        return interaction.reply(`The average of the numbers **${array.join(', ')}** is **${average.toFixed(2)}**.`);
+    },
 };
 
 const EchoCommandData = new SlashCommandBuilder()
@@ -41,6 +49,15 @@ const LengthCommandData = new SlashCommandBuilder()
     .addStringOption (option =>
         option.setName('input')
             .setDescription('The word to measure the length of.')
+            .setRequired(true)
+    )
+    .toJSON();
+const AverageCommandData = new SlashCommandBuilder()
+    .setName('average')
+    .setDescription('Calculates the average of numbers provided in a space-delimited list.')
+    .addStringOption (option =>
+        option.setName('numbers')
+            .setDescription('The numbers separated by spaces that are to be averaged.')
             .setRequired(true)
     )
     .toJSON();
