@@ -1,0 +1,11 @@
+{
+  "name":"replaybot",
+  "version":"1.0.0",
+  "description":"Backend for replay bot by @auto.scout",
+  "main":"index.js",
+  "scripts":{
+    "start":"node index.js"
+  },
+  "author":"Auto-Scout",
+  "license":"MIT"
+}
