@@ -69,7 +69,7 @@ async function registerCommands() {
         console.log('Started refreshing application (/) commands.');
         await rest.put(
             Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
-            { body: [EchoCommandData, LengthCommandData] },
+            { body: [EchoCommandData, LengthCommandData, AverageCommandData] },
         );
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
