@@ -2,8 +2,8 @@ const { client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require
 const http = require('http'); // Import Node.js HTTP module
 
 // --- Configuration ---
-const BOT_TOKEN = process.env.BOT_TOKEN || 'YOUR_BOT_TOKEN'; 
-const CLIENT_ID = process.env.CLIENT_ID || 'YOUR_CLIENT_ID'; 
+const BOT_TOKEN = process.env.BOT_TOKEN || 'MTQ0MzAyOTU3NjkyMDg1ODYzNA.GlGfgR.PfY9b5BlsVnG0cqVD8rZfO5uj6_YegqT2b2vI8'; 
+const CLIENT_ID = process.env.CLIENT_ID || ''; 
 const GUILD_ID = process.env.GUILD_ID || 'YOUR_GUILD_ID'; 
 const PORT = process.env.PORT || 3000; // Use Render's port or default to 3000
 
