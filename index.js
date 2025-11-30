@@ -2,9 +2,9 @@ const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require
 const http = require('http'); // Import Node.js HTTP module
 
 // --- Configuration ---
-const BOT_TOKEN = process.env.BOT_TOKEN || 'MTQ0MzAyOTU3NjkyMDg1ODYzNA.GlGfgR.PfY9b5BlsVnG0cqVD8rZfO5uj6_YegqT2b2vI8'; 
+const BOT_TOKEN = process.env.BOT_TOKEN || ''; 
 const CLIENT_ID = process.env.CLIENT_ID || ''; 
-const GUILD_ID = process.env.GUILD_ID || 'YOUR_GUILD_ID'; 
+const GUILD_ID = process.env.GUILD_ID || ''; 
 const PORT = process.env.PORT || 3000; // Use Render's port or default to 3000
 
 // ... (Rest of your client and commands definitions remain the same) ...
@@ -19,7 +19,11 @@ const Commands = {
     echo: (interaction) => {
         const input = interaction.options.getString('input');
         return interaction.reply(`You said: ${input}`);
-    }
+    },
+    length: (interaction) => {
+        const input = interaction.options.getString('input');
+        return interaction.reply(`The length of "${input}" is **${input.length}** characters.`);
+    },
 };
 
 const EchoCommandData = new SlashCommandBuilder()
@@ -31,6 +35,15 @@ const EchoCommandData = new SlashCommandBuilder()
             .setRequired(true)
     )
     .toJSON();
+const LengthCommandData = new SlashCommandBuilder()
+    .setName('length')
+    .setDescription('Returns the length of the input word.')
+    .addStringOption (option =>
+        option.setName('input')
+            .setDescription('The word to measure the length of.')
+            .setRequired(true)
+    )
+    .toJSON();
 
 // Function to register the commands with Discord
 async function registerCommands() {
@@ -39,7 +52,7 @@ async function registerCommands() {
         console.log('Started refreshing application (/) commands.');
         await rest.put(
             Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
-            { body: [EchoCommandData] },
+            { body: [EchoCommandData, LengthCommandData] },
         );
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
