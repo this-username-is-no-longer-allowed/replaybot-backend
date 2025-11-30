@@ -1,4 +1,4 @@
-const { client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 const http = require('http'); // Import Node.js HTTP module
 
 // --- Configuration ---
@@ -8,6 +8,13 @@ const GUILD_ID = process.env.GUILD_ID || 'YOUR_GUILD_ID';
 const PORT = process.env.PORT || 3000; // Use Render's port or default to 3000
 
 // ... (Rest of your client and commands definitions remain the same) ...
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
+});
 const Commands = {
     echo: (interaction) => {
         const input = interaction.options.getString('input');
