@@ -94,13 +94,19 @@ client.on('interactionCreate', async interaction => {
 
 
 // --- ADDED CODE TO SATISFY RENDER'S PORT REQUIREMENT ---
-http.createServer((req, res) => {
+const httpServer = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Discord bot is alive and running!\n');
-}).listen(PORT, () => {
-    console.log(`Web server running on port ${PORT}`);
 });
 // --------------------------------------------------------
+
+// Socket server setup
+const io = new Server(httpServer);
+
+// Have server listen
+httpServer.listen(PORT, () => {
+    console.log(`Web server running on port ${PORT}`);
+});
 
 // Log in to Discord
 client.login(BOT_TOKEN);
