@@ -4,12 +4,71 @@ const fetch = require('node-fetch'); // Import fetch
 const path = require('path'); // More imports
 const express = require('express');
 const { Server } = require('socket.io'); // This creates a Websocket handling instance
+import puppeteer from 'puppeteer';
 
 // --- Configuration ---
 const BOT_TOKEN = process.env.BOT_TOKEN || ''; 
 const CLIENT_ID = process.env.CLIENT_ID || ''; 
 const GUILD_ID = process.env.GUILD_ID || ''; 
 const PORT = process.env.PORT || 3000; // Use Render's port or default to 3000
+
+// File path setup
+const FILENAME = fileURLToPath(import.meta.url);
+const DIRNAME = path.dirname(FILENAME);
+const goiseRunnerPath = path.join(DIRNAME, 'gamefiles/goise.html');
+// const appelRunnerPath = path.join(DIRNAME, 'gamefiles/appel.html');
+
+// --- Headless browser async logic ---
+async function runCanvasTaskHeadless() {
+    let browser;
+    try {
+        console.log('Launching headless browser...');
+        browser = await puppeteer.launch({
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage'
+            ]
+        });
+
+        const page = await browser.newPage();
+        // Step 1: pass input data before evaluation
+        await page.evaluateOnNewDocument(data => {
+            window.taskInputData = data;
+        }, inputData);
+
+        // Step 2: load local html file
+        await page.goto(`https://this-username-is-no-longer-allowed.github.io/replaybot-backend/${goiseRunnerPath}`, { // <-- APPEND QUERY PARAM `code` LATER
+            waitUntil: 'networkidle0',
+            timeout: 30000
+        });
+
+        // Step 3: tell html script to initiate computation
+        await page.evaluate(() => {
+            window.startComputation();
+        });
+
+        // Step 4: target location to receive output when ready
+        const outputElement = '#output' // <-- ADD SPAN ELEMENT WITH ID output TO HTML GAME FILE AND USE JAVASCRIPT TO POPULATE ITS TEXTCONTENT WITH LIST OFNPMG DATA URI'S
+
+        // Step 5: wait for the output to be ready and populated, then collect its content for further processing
+        await page.waitForFunction(selector => {
+            const element = document.querySelector(selector);
+            return element.textContent.length > 0; // True when element populates its text content
+        }, {timeout: 300000}, outputElement); // Wait up to five minutes
+
+        // Step 6: read the final result from the output element
+        const resultText = await page.$eval(outputElement, el => el.textContent);
+
+        return resultText; // For now, simply return the result text
+    } catch (error) {
+        return `[ERROR] Failed to run task: ${error.message}`;
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
+    }
+}
 
 // ... (Rest of your client and commands definitions remain the same) ...
 const client = new Client({
