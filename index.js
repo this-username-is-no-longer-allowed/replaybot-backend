@@ -72,7 +72,7 @@ const GOISEEncodeCommandData = new SlashCommandBuilder()
     .toJSON();
 const GuessageCommandData = new SlashCommandBuilder()
     .setName('guessage')
-    .setDescription('Guesses the age of Auto-Scout!'
+    .setDescription('Guesses the age of Auto-Scout!')
     .toJSON();
 
 // Function to register the commands with Discord
