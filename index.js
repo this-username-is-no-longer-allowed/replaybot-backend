@@ -1,9 +1,9 @@
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 const http = require('http'); // Import Node.js HTTP module
 const fetch = require('node-fetch'); // Import fetch
-const path = require('path');
+const path = require('path'); // More imports
 const express = require('express');
-const { Server } = require('socket.io');
+const { Server } = require('socket.io'); // This creates a Websocket handling instance
 
 // --- Configuration ---
 const BOT_TOKEN = process.env.BOT_TOKEN || ''; 
@@ -28,12 +28,12 @@ const Commands = {
             return interaction.reply(`The attached file \`${attachment.name}\` was not a plaintext file, ensure the extension is \`.txt\`.`);
         }
 
-        const fileUrl = attachment.url;
+        const fileUrl = attachment.url; // Gets a url to the uploaded file from Discord's CDN
 
         try {
             // Fetch the file content from Discord's CDN
             const response = await fetch(fileUrl);
-            const textContent = await response.text();
+            const textContent = await response.text(); // Gets the actual content of the file as a string
 
             // For now just assume nothing can be done yet
             return interaction.reply(`# Sorry, but this feature is not yet available.\n\nCheck later for better luck!`);
@@ -94,7 +94,7 @@ client.on('ready', () => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
-    const commandHandler = Commands[interaction.commandName];
+    const commandHandler = Commands[interaction.commandName]; // This is the actual logic that generates the response
 
     if (commandHandler) {
         try {
