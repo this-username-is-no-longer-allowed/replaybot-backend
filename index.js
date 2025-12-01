@@ -1,6 +1,9 @@
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 const http = require('http'); // Import Node.js HTTP module
 const fetch = require('node-fetch'); // Import fetch
+const path = require('path');
+const express = require('express');
+const { Server } = require('socket.io');
 
 // --- Configuration ---
 const BOT_TOKEN = process.env.BOT_TOKEN || ''; 
