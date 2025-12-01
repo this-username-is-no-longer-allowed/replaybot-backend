@@ -47,7 +47,7 @@ const Commands = {
         return interaction.reply(`You said: ${input}`);
     },
     guessage: (interaction) => {
-        return interaction.reply(`Guess: **${Math.round(100 * Math.random())}**.`;
+        return interaction.reply(`Guess: **${Math.round(100 * Math.random())}**.`);
     },
 };
 
