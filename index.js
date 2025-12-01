@@ -42,7 +42,21 @@ const Commands = {
             return interaction.reply({content: 'Failed to fetch file content from URL.', ephemeral: true});
         }
     },
+    echo: (interaction) => {
+        const input = interaction.options.getString('input');
+        return interaction.reply(`You said: ${input}`);
+    }
 };
+
+const EchoCommandData = new SlashCommandBuilder()
+    .setName('echo')
+    .setDescription('Echoes back the input word.')
+    .addStringOption(option =>
+        option.setName('input')
+            .setDescription('The word to echo back.')
+            .setRequired(true)
+    )
+    .toJSON();
 
 const GOISEEncodeCommandData = new SlashCommandBuilder()
     .setName('goiseencode')
@@ -61,7 +75,7 @@ async function registerCommands() {
         console.log('Started refreshing application (/) commands.');
         await rest.put(
             Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
-            { body: [GOISEEncodeCommandData] },
+            { body: [GOISEEncodeCommandData, EchoCommandData] },
         );
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
