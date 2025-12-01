@@ -45,7 +45,10 @@ const Commands = {
     echo: (interaction) => {
         const input = interaction.options.getString('input');
         return interaction.reply(`You said: ${input}`);
-    }
+    },
+    guessage: (interaction) => {
+        return interaction.reply(`Guess: **${Math.round(100 * Math.random())}**.`;
+    },
 };
 
 const EchoCommandData = new SlashCommandBuilder()
@@ -67,6 +70,10 @@ const GOISEEncodeCommandData = new SlashCommandBuilder()
             .setRequired(true)
     )
     .toJSON();
+const GuessageCommandData = new SlashCommandBuilder()
+    .setName('guessage')
+    .setDescription('Guesses the age of Auto-Scout!'
+    .toJSON();
 
 // Function to register the commands with Discord
 async function registerCommands() {
@@ -75,7 +82,7 @@ async function registerCommands() {
         console.log('Started refreshing application (/) commands.');
         await rest.put(
             Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
-            { body: [GOISEEncodeCommandData, EchoCommandData] },
+            { body: [GOISEEncodeCommandData, EchoCommandData, GuessageCommandData] },
         );
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
