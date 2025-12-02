@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
+import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'discord.js';
 const http = require('http'); // Import Node.js HTTP module
 const fetch = require('node-fetch'); // Import fetch
 const path = require('path'); // More imports
