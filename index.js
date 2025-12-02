@@ -180,9 +180,6 @@ const httpServer = http.createServer((req, res) => {
 });
 // --------------------------------------------------------
 
-// Socket server setup
-const io = new Server(httpServer);
-
 // Have server listen
 httpServer.listen(PORT, () => {
     console.log(`Web server running on port ${PORT}`);
