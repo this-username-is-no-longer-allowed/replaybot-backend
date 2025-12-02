@@ -1,9 +1,8 @@
+// Using import prevents using require, hence the change to all of them
 import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'discord.js';
-const http = require('http'); // Import Node.js HTTP module
-const fetch = require('node-fetch'); // Import fetch
-const path = require('path'); // More imports
-const express = require('express');
-const { Server } = require('socket.io'); // This creates a Websocket handling instance
+import http from 'http'; // Import Node.js HTTP module
+import fetch from 'node-fetch'; // Import fetch
+import path from 'path'; // More imports
 import puppeteer from 'puppeteer';
 
 // --- Configuration ---
