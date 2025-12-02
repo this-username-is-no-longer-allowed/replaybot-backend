@@ -3,6 +3,7 @@ import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'di
 import http from 'http'; // Import Node.js HTTP module
 import fetch from 'node-fetch'; // Import fetch
 import path from 'path'; // More imports
+import { fileURLToPath } from 'url'; // THIS IMPORT IS CRITICAL
 import puppeteer from 'puppeteer';
 
 // --- Configuration ---
