@@ -54,7 +54,7 @@ async function runCanvasTaskHeadless() {
         // Step 5: wait for the output to be ready and populated, then collect its content for further processing
         await page.waitForFunction(selector => {
             const element = document.querySelector(selector);
-            return element.textContent.length > 0; // True when element populates its text content
+            return element?.textContent.length > 0; // True when element exists and populates its text content, added optional chaining operator to prevent error
         }, {timeout: 300000}, outputElement); // Wait up to five minutes
 
         // Step 6: read the final result from the output element
