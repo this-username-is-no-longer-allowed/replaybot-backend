@@ -1,14 +1,19 @@
 // Using import prevents using require, hence the change to all of them
 import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'discord.js';
 import http from 'http'; // Import Node.js HTTP module
+import fs from 'fs';
+import ffmpeg from 'fluent-ffmpeg';
 import fetch from 'node-fetch'; // Import fetch
 import path from 'path'; // More imports
 import { fileURLToPath } from 'url'; // THIS IMPORT IS CRITICAL
 import puppeteer from 'puppeteer';
+import express from 'express';
 
 // --- Configuration ---
 const BOT_TOKEN = process.env.BOT_TOKEN || ''; 
 const CLIENT_ID = process.env.CLIENT_ID || ''; 
+const CANVAS_TASK_URL = process.env.CANVAS_TASK_URL || '';
+const APP_URL = process.env.RENDER_EXTERNAL_URL || '';
 const GUILD_ID = process.env.GUILD_ID || ''; 
 const PORT = process.env.PORT || 3000; // Use Render's port or default to 3000
 
@@ -17,6 +22,23 @@ const FILENAME = fileURLToPath(import.meta.url);
 const DIRNAME = path.dirname(FILENAME);
 const goiseRunnerPath = path.join(DIRNAME, 'gamefiles/goise.html');
 // const appelRunnerPath = path.join(DIRNAME, 'gamefiles/appel.html');
+
+if (!fs.existsSync(goiseRunnerPath)) fs.mkdirSync(goiseRunnerPath, { recursive: true });
+
+// Express Server
+const app = express();
+app.use(express.static(goiseRunnerPath));
+app.listen(PORT, () => {
+    console.log(`[System] File server ready on port ${PORT}`);
+});
+
+const QUEUE = [];
+let isProcessing = false;
+
+function base64ToBuffer(base64String) {
+    const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+    return Buffer.from(base64Data, 'base64');
+}
 
 // --- Headless browser async logic ---
 async function runCanvasTaskHeadless() {
@@ -40,7 +62,7 @@ async function runCanvasTaskHeadless() {
         // Step 2: load local html file
         await page.goto(`https://this-username-is-no-longer-allowed.github.io/replaybot-backend/${goiseRunnerPath}`, { // <-- APPEND QUERY PARAM `code` LATER
             waitUntil: 'networkidle0',
-            timeout: 30000
+            timeout: 300000
         });
 
         // Step 3: tell html script to initiate computation
@@ -59,8 +81,9 @@ async function runCanvasTaskHeadless() {
 
         // Step 6: read the final result from the output element
         const resultText = await page.$eval(outputElement, el => el.textContent);
+        const resultArray = resultText.split(' ');
 
-        return resultText; // For now, simply return the result text
+        return resultArray; // Simply return the result array
     } catch (error) {
         return `[ERROR] Failed to run task: ${error.message}`;
     } finally {
