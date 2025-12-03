@@ -13,7 +13,7 @@
     "node-fetch":"^2.6.7",
     "express":"^4.18.2",
     "puppeteer":"^24.31.0",
-    "fluent-ffmpeg":"^4.18.2"
+    "fluent-ffmpeg":"^2.1.2"
   },
   "engines": {
     "node":">=18.0.0"
