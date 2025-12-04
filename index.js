@@ -99,7 +99,7 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
         // Step 1: pass input data before evaluation
         await page.evaluateOnNewDocument(data => {
             window.taskInputData = data;
-        }, inputData);
+        }, replayCode);
         
         // Step 2: load local html file
         await interaction.editReply(logLine("New window created! Loading GOISE..."));
