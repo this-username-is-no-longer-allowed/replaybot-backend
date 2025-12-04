@@ -194,6 +194,9 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     registerCommands(); 
 });
+client.on('error', e => {
+    console.error("[FATAL] Discord Client Error: " + e);
+});
 
 // Event: Interaction (Slash Command) received
 client.on('interactionCreate', async interaction => {
