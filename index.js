@@ -77,7 +77,7 @@ function logLine(text) {
 }
 
 // --- Headless browser async logic ---
-async function runCanvasTaskHeadless(replayCode) {
+async function runCanvasTaskHeadless(replayCode, interaction) {
     let browser;
     try {
         console.log('Launching headless browser...');
@@ -226,7 +226,7 @@ const Commands = {
             const textContent = await response.text(); // Gets the actual content of the file as a string
             await interaction.editReply(logLine("String content received!"));
             
-            const frames = runCanvasTaskHeadless(textContent);
+            const frames = runCanvasTaskHeadless(textContent, interaction);
             if (frames.length === 0) {
                 await interaction.editReply(logLine("Error: Null replay code file"));
                 return;
