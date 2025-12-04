@@ -142,42 +142,44 @@ async function runCanvasTaskHeadless(replayCode) {
 
 async function encodeVideoLocally(array, id) {
     return new Promise((resolve, reject) => {
-        const fileName = `vid-${id}.mp4`;
-        const filePath = path.join(DIRNAME, fileName);
+        (async () => {
+            const fileName = `vid-${id}.mp4`;
+            const filePath = path.join(DIRNAME, fileName);
 
-        await interaction.editReply(logLine("Starting ffmpeg encoding..."));
-        const command = ffmpeg()
-            .input('pipe:')
-            .inputOptions(['-f', 'image2pipe', '-r', '30'])
-            .videoCodec('libx264')
-            .outputOptions(['-pix_fmt', 'yuv420p', '-r', '30', '-movflags', 'faststart'])
-            .save(filePath);
+            await interaction.editReply(logLine("Starting ffmpeg encoding..."));
+            const command = ffmpeg()
+                .input('pipe:')
+                .inputOptions(['-f', 'image2pipe', '-r', '30'])
+                .videoCodec('libx264')
+                .outputOptions(['-pix_fmt', 'yuv420p', '-r', '30', '-movflags', 'faststart'])
+                .save(filePath);
 
-        command.on('error', e => {
-            await interaction.editReply(logLine("Error: " + e.message));
-            reject(new Error("Encoding failed: " + e.message));
-        });
+            command.on('error', e => {
+                await interaction.editReply(logLine("Error: " + e.message));
+                reject(new Error("Encoding failed: " + e.message));
+            });
 
-        command.on('end', () => {
-            await interaction.editReply(logLine("Ffmpeg encoding complete! Saving to disk.."));
-            const publicUrl = `${APP_URL}/${fileName}`;
-            setTimeout(() => {
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath); 
-                    await interaction.editReply(logLine("Warning: Video expired and removed from servers. Video embed may disappear at any time."));
-                }
-            }, 3600000);
-            resolve(publicUrl);
-        });
+            command.on('end', () => {
+                await interaction.editReply(logLine("Ffmpeg encoding complete! Saving to disk.."));
+                const publicUrl = `${APP_URL}/${fileName}`;
+                setTimeout(() => {
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath); 
+                        await interaction.editReply(logLine("Warning: Video expired and removed from servers. Video embed may disappear at any time."));
+                    }
+                }, 3600000);
+                resolve(publicUrl);
+            });
 
-        // Streaming loop: push data from array into pipe
-        const inputPipe = command.pipe();
-        await interaction.editReply(logLine("Converting Base 64 PNG images to Buffer..."));
-        for (const frameBase64 of array) {
-            inputPipe.write(base64ToBuffer(frameBase64));
-        }
-        await interaction.editReply(logLine("Conversion complete!"));
-        inputPipe.end();
+            // Streaming loop: push data from array into pipe
+            const inputPipe = command.pipe();
+            await interaction.editReply(logLine("Converting Base 64 PNG images to Buffer..."));
+            for (const frameBase64 of array) {
+                inputPipe.write(base64ToBuffer(frameBase64));
+            }
+            await interaction.editReply(logLine("Conversion complete!"));
+            inputPipe.end();
+        })();
     });
 }
 
@@ -209,7 +211,7 @@ const Commands = {
             return;
         }
         await interaction.editReply(logLine("Verified! Fetching URL to file..."));
-
+        
         const fileUrl = attachment.url; // Gets a url to the uploaded file from Discord's CDN
 
         try {
