@@ -36,7 +36,7 @@ if (!PORT) {
 // File path setup
 const FILENAME = fileURLToPath(import.meta.url);
 const DIRNAME = path.dirname(FILENAME);
-const goiseRunnerPath = path.join(DIRNAME, 'gamefiles/goise.html');
+const goiseRunnerPath = path.join(DIRNAME, CANVAS_TASK_URL);
 // const appelRunnerPath = path.join(DIRNAME, 'gamefiles/appel.html');
 
 if (!fs.existsSync(goiseRunnerPath)) fs.mkdirSync(goiseRunnerPath, { recursive: true });
