@@ -232,7 +232,7 @@ client.login(BOT_TOKEN).catch(e => {
     console.error("[FATAL] Discord login failed. Check token and intents: " + e);
     process.exit(1);
 });
-
+/*
 // --- ADDED CODE TO SATISFY RENDER'S PORT REQUIREMENT ---
 const httpServer = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -243,7 +243,7 @@ const httpServer = http.createServer((req, res) => {
 // Have server listen
 httpServer.listen(PORT, () => {
     console.log(`Web server running on port ${PORT}`);
-});
+});*/
 
 // Log in to Discord
 client.login(BOT_TOKEN);
