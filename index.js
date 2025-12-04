@@ -5,6 +5,8 @@ import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'di
 import http from 'http'; // Import Node.js HTTP module
 import fs from 'fs';
 import ffmpeg from 'fluent-ffmpeg';
+import ffmpegpath from 'ffmpeg-static';
+ffmpeg.setFfmpegPath(ffmpegpath);
 import fetch from 'node-fetch'; // Import fetch
 import path from 'path'; // More imports
 import { fileURLToPath } from 'url'; // THIS IMPORT IS CRITICAL
