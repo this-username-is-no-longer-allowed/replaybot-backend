@@ -103,6 +103,7 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
         
         // Step 2: load local html file
         await interaction.editReply(logLine("New window created! Loading GOISE..."));
+        console.log(goiseRunnerPath);
         await page.goto(`${goiseRunnerPath}?code=${replayCode}`, {
             waitUntil: 'networkidle0',
             timeout: 300000
