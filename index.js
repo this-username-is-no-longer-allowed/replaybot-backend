@@ -1,3 +1,5 @@
+const BOOT_ID = Math.floor(Math.random() * 10000);
+console.log("[STARTUP] Booting Instance ID: " + BOOT_ID);
 // Using import prevents using require, hence the change to all of them
 import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'discord.js';
 import http from 'http'; // Import Node.js HTTP module
@@ -42,6 +44,7 @@ if (!fs.existsSync(goiseRunnerPath)) fs.mkdirSync(goiseRunnerPath, { recursive: 
 // Express Server
 const app = express();
 app.use(express.static(goiseRunnerPath));
+console.log(`[SERVER] Instance ${BOOT_ID} is attempting to claim port ${PORT}`);
 const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`[System] File server ready on port ${PORT}`);
 });
