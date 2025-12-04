@@ -227,8 +227,10 @@ const Commands = {
             await interaction.editReply(logLine("String content received!"));
             
             const frames = runCanvasTaskHeadless(textContent);
-            if (frames.length === 0) return;
-            
+            if (frames.length === 0) {
+                await interaction.editReply(logLine("Error: Null replay code file"));
+                return;
+            }
             const video = await encodeVideoLocally(frames, seed);
 
             await interaction.editReply(logLine("Preparing to send video..."));
