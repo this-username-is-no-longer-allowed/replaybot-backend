@@ -73,7 +73,7 @@ function base64ToBuffer(base64String) {
 let logLines = [];
 function logLine(text) {
     logLines.push(text);
-    return { content: `\`\`\`bash\n${logLines.join('\n')\n\`\`\`` };
+    return { content: `\`\`\`bash\n${logLines.join('\n')}\n\`\`\`` };
 }
 
 // --- Headless browser async logic ---
