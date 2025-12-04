@@ -166,10 +166,12 @@ async function encodeVideoLocally(array, id) {
                     await interaction.editReply(logLine("Ffmpeg encoding complete! Saving to disk.."));
                     const publicUrl = `${APP_URL}/${fileName}`;
                     setTimeout(() => {
-                        if (fs.existsSync(filePath)) {
-                            fs.unlinkSync(filePath); 
-                            await interaction.editReply(logLine("Warning: Video expired and removed from servers. Video embed may disappear at any time."));
-                        }
+                        (async () => {
+                            if (fs.existsSync(filePath)) {
+                                fs.unlinkSync(filePath); 
+                                await interaction.editReply(logLine("Warning: Video expired and removed from servers. Video embed may disappear at any time."));
+                            }
+                        })();
                     }, 3600000);
                     resolve(publicUrl);
                 }
