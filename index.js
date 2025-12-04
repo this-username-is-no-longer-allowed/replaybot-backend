@@ -83,10 +83,12 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
         console.log('Launching headless browser...');
         await interaction.editReply(logLine("Launching puppeteer..."));
         browser = await puppeteer.launch({
+            headless: true,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage'
+                '--disable-dev-shm-usage',
+                '--single-process'
             ]
         });
         await interaction.editReply(logLine("Puppeteer launched! Creating new window..."));
