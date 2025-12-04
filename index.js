@@ -240,7 +240,7 @@ const Commands = {
         }
     },
     echo: (interaction) => {
-        const input = interaction.optins.getString('input');
+        const input = interaction.options.getString('input');
         return interaction.reply(`You said: ${input}`);
     },
     guessage: (interaction) => {
