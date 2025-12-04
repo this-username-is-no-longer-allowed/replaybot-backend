@@ -28,8 +28,19 @@ if (!fs.existsSync(goiseRunnerPath)) fs.mkdirSync(goiseRunnerPath, { recursive: 
 // Express Server
 const app = express();
 app.use(express.static(goiseRunnerPath));
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`[System] File server ready on port ${PORT}`);
+});
+
+server.on('error', e => {
+    if (e.code === 'EADDRINUSE') {
+        console.error(`[FATAL] Port ${PORT} already in use`);
+    } else if (e.code === 'EACCES') {
+        console.error(`[FATAL] Permission denied on port ${PORT}. Is PORT 80?`);
+    } else {
+        console.error("[FATAL] Server crashed with error " + e);
+    }
+    process.exit(1);
 });
 
 const QUEUE = [];
