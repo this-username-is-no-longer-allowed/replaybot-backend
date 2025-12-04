@@ -214,6 +214,10 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
+client.login(DISCORD_BOT_TOKEN).catch(e => {
+    console.error("[FATAL] Discord login failed. Check token and intents: " + e);
+    process.exit(1);
+});
 
 // --- ADDED CODE TO SATISFY RENDER'S PORT REQUIREMENT ---
 const httpServer = http.createServer((req, res) => {
