@@ -214,7 +214,7 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-client.login(DISCORD_BOT_TOKEN).catch(e => {
+client.login(BOT_TOKEN).catch(e => {
     console.error("[FATAL] Discord login failed. Check token and intents: " + e);
     process.exit(1);
 });
