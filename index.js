@@ -142,7 +142,7 @@ async function runCanvasTaskHeadless(replayCode) {
 
 async function encodeVideoLocally(array, id) {
     return new Promise((resolve, reject) => {
-        (async () => {
+        (async (resolve, reject) => {
             const fileName = `vid-${id}.mp4`;
             const filePath = path.join(DIRNAME, fileName);
 
@@ -155,20 +155,24 @@ async function encodeVideoLocally(array, id) {
                 .save(filePath);
 
             command.on('error', e => {
-                await interaction.editReply(logLine("Error: " + e.message));
-                reject(new Error("Encoding failed: " + e.message));
+                (async (e) => {
+                    await interaction.editReply(logLine("Error: " + e.message));
+                    reject(new Error("Encoding failed: " + e.message));
+                })(e);
             });
 
             command.on('end', () => {
-                await interaction.editReply(logLine("Ffmpeg encoding complete! Saving to disk.."));
-                const publicUrl = `${APP_URL}/${fileName}`;
-                setTimeout(() => {
-                    if (fs.existsSync(filePath)) {
-                        fs.unlinkSync(filePath); 
-                        await interaction.editReply(logLine("Warning: Video expired and removed from servers. Video embed may disappear at any time."));
-                    }
-                }, 3600000);
-                resolve(publicUrl);
+                (async () => {
+                    await interaction.editReply(logLine("Ffmpeg encoding complete! Saving to disk.."));
+                    const publicUrl = `${APP_URL}/${fileName}`;
+                    setTimeout(() => {
+                        if (fs.existsSync(filePath)) {
+                            fs.unlinkSync(filePath); 
+                            await interaction.editReply(logLine("Warning: Video expired and removed from servers. Video embed may disappear at any time."));
+                        }
+                    }, 3600000);
+                    resolve(publicUrl);
+                }
             });
 
             // Streaming loop: push data from array into pipe
@@ -179,7 +183,7 @@ async function encodeVideoLocally(array, id) {
             }
             await interaction.editReply(logLine("Conversion complete!"));
             inputPipe.end();
-        })();
+        })(resolve, reject);
     });
 }
 
