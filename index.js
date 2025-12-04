@@ -73,14 +73,15 @@ function base64ToBuffer(base64String) {
 let logLines = [];
 function logLine(text) {
     logLines.push(text);
-    return `\`\`\`bash\n${logLines.join('\n')\n\`\`\``;
+    return { content: `\`\`\`bash\n${logLines.join('\n')\n\`\`\`` };
 }
 
 // --- Headless browser async logic ---
-async function runCanvasTaskHeadless() {
+async function runCanvasTaskHeadless(replayCode) {
     let browser;
     try {
         console.log('Launching headless browser...');
+        await interaction.editReply(logLine("Launching puppeteer..."));
         browser = await puppeteer.launch({
             args: [
                 '--no-sandbox',
@@ -88,25 +89,29 @@ async function runCanvasTaskHeadless() {
                 '--disable-dev-shm-usage'
             ]
         });
+        await interaction.editReply(logLine("Puppeteer launched! Creating new window..."));
 
         const page = await browser.newPage();
         // Step 1: pass input data before evaluation
         await page.evaluateOnNewDocument(data => {
             window.taskInputData = data;
         }, inputData);
-
+        
         // Step 2: load local html file
-        await page.goto(`${goiseRunnerPath}?code=${''}`, {
+        await interaction.editReply(logLine("New window created! Loading GOISE..."));
+        await page.goto(`${goiseRunnerPath}?code=${replayCode}`, {
             waitUntil: 'networkidle0',
             timeout: 300000
         });
 
         // Step 3: tell html script to initiate computation
+        await interaction.editReply(logLine("GOISE loaded! Starting computation..."));
         await page.evaluate(() => {
             window.startComputation();
         });
 
         // Step 4: target location to receive output when ready
+        await interaction.editReply(logLine("Computation started! Awaiting output frames..."));
         const outputElement = '#output' // <-- ADD SPAN ELEMENT WITH ID output TO HTML GAME FILE AND USE JAVASCRIPT TO POPULATE ITS TEXTCONTENT WITH LIST OFNPMG DATA URI'S
 
         // Step 5: wait for the output to be ready and populated, then collect its content for further processing
@@ -116,17 +121,64 @@ async function runCanvasTaskHeadless() {
         }, {timeout: 300000}, outputElement); // Wait up to five minutes
 
         // Step 6: read the final result from the output element
+        await interaction.editReply(logLine("Output frames received! Closing puppeteer..."));
+        
         const resultText = await page.$eval(outputElement, el => el.textContent);
         const resultArray = resultText.split(' ');
-
-        return resultArray; // Simply return the result array
-    } catch (error) {
-        return `[ERROR] Failed to run task: ${error.message}`;
-    } finally {
+        
         if (browser) {
             await browser.close();
         }
+
+        return resultArray; // Simply return the result array
+    } catch (error) {
+        await interaction.editReply(logLine("Error: " + error.message));
+        if (browser) {
+            await browser.close();
+        }
+        return [];
     }
+}
+
+function encodeVideoLocally(array, id) {
+    return new Promise((resolve, reject) => {
+        const fileName = `vid-${id}.mp4`;
+        const filePath = path.join(DIRNAME, fileName);
+
+        await interaction.editReply(logLine("Starting ffmpeg encoding..."));
+        const command = ffmpeg()
+            .input('pipe:')
+            .inputOptions(['-f', 'image2pipe', '-r', '30'])
+            .videoCodec('libx264')
+            .outputOptions(['-pix_fmt', 'yuv420p', '-r', '30', '-movflags', 'faststart'])
+            .save(filePath);
+
+        command.on('error', e => {
+            await interaction.editReply(logLine("Error: " + e.message));
+            reject(new Error("Encoding failed: " + e.message));
+        });
+
+        command.on('end', () => {
+            await interaction.editReply(logLine("Ffmpeg encoding complete! Saving to disk.."));
+            const publicUrl = `${APP_URL}/${fileName}`;
+            setTimeout(() => {
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath); 
+                    await interaction.editReply(logLine("Warning: Video expired and removed from servers. Video embed may disappear at any time."));
+                }
+            }, 3600000);
+            resolve(publicUrl);
+        });
+
+        // Streaming loop: push data from array into pipe
+        const inputPipe = command.pipe();
+        await interaction.editReply(logLine("Converting Base 64 PNG images to Buffer..."));
+        for (const frameBase64 of array) {
+            inputPipe.write(base64ToBuffer(frameBase64));
+        }
+        await interaction.editReply(logLine("Conversion complete!"));
+        inputPipe.end();
+    });
 }
 
 // ... (Rest of your client and commands definitions remain the same) ...
@@ -139,7 +191,10 @@ const client = new Client({
 });
 const Commands = {
     goiseencode: async (interaction) => {
-        await interaction.reply("```bash\nReceived command...\n```");
+        await interaction.deferReply({ ephemeral: false });
+        interaction.editReply(logLine("Request received! Processing..."));
+        const seed = interaction.id;
+        QUEUE.push(seed);
         await interaction.editReply(logLine("Checking for file..."));
         const attachment = interaction.options.getAttachment('file');
         if (!attachment) {
@@ -161,17 +216,23 @@ const Commands = {
             // Fetch the file content from Discord's CDN
             const response = await fetch(fileUrl);
             const textContent = await response.text(); // Gets the actual content of the file as a string
-            await interaction.editReply(logLine("String content received! Loading GOISE..."));
-            await interaction.editReply(logLine("Error: Feature incomplete. Check back soon"));
+            await interaction.editReply(logLine("String content received!"));
+            
+            const frames = runCanvasTaskHeadless(textContent);
+            if (frames.length === 0) return;
+            
+            const video = await encodeVideoLocally(frames, seed);
 
-            return;
+            await interaction.editReply(logLine("Preparing to send video..."));
+            
+            await interaction.editReply({ content: `${logLine("Video send imminent!")}\n[Replay Video](${video})` });
         } catch (error) {
             await interaction.editReply(logLine("Error: Unable to fetch file"));
             return;
         }
     },
     echo: (interaction) => {
-        const input = interaction.options.getString('input');
+        const input = interaction.optins.getString('input');
         return interaction.reply(`You said: ${input}`);
     },
     guessage: (interaction) => {
