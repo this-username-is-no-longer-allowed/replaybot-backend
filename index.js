@@ -89,7 +89,8 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
                 '--single-process'
-            ]
+            ],
+            timeout: 300000
         });
         await interaction.editReply(logLine("Puppeteer launched! Creating new window..."));
 
