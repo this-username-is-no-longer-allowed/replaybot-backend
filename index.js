@@ -9,6 +9,15 @@ import { fileURLToPath } from 'url'; // THIS IMPORT IS CRITICAL
 import puppeteer from 'puppeteer';
 import express from 'express';
 
+// Error handling
+process.on('uncaughtException', e => {
+    console.error("[FATAL] UncaughtException: " + e);
+    process.exit(1);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error(`[FATAL] UnhandledRejection at: ${promise} reason: ${reason}`);
+});
+
 // --- Configuration ---
 const BOT_TOKEN = process.env.BOT_TOKEN || ''; 
 const CLIENT_ID = process.env.CLIENT_ID || ''; 
@@ -33,7 +42,7 @@ if (!fs.existsSync(goiseRunnerPath)) fs.mkdirSync(goiseRunnerPath, { recursive: 
 // Express Server
 const app = express();
 app.use(express.static(goiseRunnerPath));
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`[System] File server ready on port ${PORT}`);
 });
 
