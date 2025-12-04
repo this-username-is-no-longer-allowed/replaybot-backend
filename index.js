@@ -29,6 +29,7 @@ const CANVAS_TASK_URL = process.env.CANVAS_TASK_URL || '';
 const APP_URL = process.env.RENDER_EXTERNAL_URL || '';
 const GUILD_ID = process.env.GUILD_ID || ''; 
 const PORT = process.env.PORT // Use Render's port or default to 3000
+const PUPPETEER_EXECUTABLE_PATH = process.env.PUPPETEER_EXECUTABLE_PATH;
 
 if (!PORT) {
     console.error("[FATAL] Environment variable PORT is missing. Cannot start server.");
@@ -84,12 +85,12 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
         await interaction.editReply(logLine("Launching puppeteer..."));
         browser = await puppeteer.launch({
             headless: true,
-            executablePath: 'usr/bin/chromium',
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
-                '--single-process'
+                '--single-process',
+                '--no-zygote'
             ],
             timeout: 300000
         });
