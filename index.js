@@ -70,6 +70,12 @@ function base64ToBuffer(base64String) {
     return Buffer.from(base64Data, 'base64');
 }
 
+let logLines = [];
+function logLine(text) {
+    logLines.push(text);
+    return `\`\`\`bash\n${logLines.join('\n')\n\`\`\``;
+}
+
 // --- Headless browser async logic ---
 async function runCanvasTaskHeadless() {
     let browser;
@@ -90,7 +96,7 @@ async function runCanvasTaskHeadless() {
         }, inputData);
 
         // Step 2: load local html file
-        await page.goto(`https://this-username-is-no-longer-allowed.github.io/replaybot-backend/${goiseRunnerPath}`, { // <-- APPEND QUERY PARAM `code` LATER
+        await page.goto(`${goiseRunnerPath}?code=${''}`, {
             waitUntil: 'networkidle0',
             timeout: 300000
         });
@@ -133,12 +139,21 @@ const client = new Client({
 });
 const Commands = {
     goiseencode: async (interaction) => {
+        await interaction.reply("```bash\nReceived command...\n```");
+        await interaction.editReply(logLine("Checking for file..."));
         const attachment = interaction.options.getAttachment('file');
+        if (!attachment) {
+            await interaction.editReply(logLine("Error: File not found"));
+        }
+        await interaction.editReply(logLine("File found! Parsing contents..."));
 
         // Ensure MIME is text/plain (plaintext file)
+        await interaction.editReply(logLine("Verifying MIME type..."));
         if (attachment.contentType && !attachment.contentType.startsWith('text/plain')) {
-            return interaction.reply(`The attached file \`${attachment.name}\` was not a plaintext file, ensure the extension is \`.txt\`.`);
+            await interaction.editReply(logLine(`Error: The attached file was not a plaintext file. Ensure the extension is \`.txt\`.`));
+            return;
         }
+        await interaction.editReply(logLine("Verified! Fetching URL to file..."));
 
         const fileUrl = attachment.url; // Gets a url to the uploaded file from Discord's CDN
 
@@ -146,12 +161,13 @@ const Commands = {
             // Fetch the file content from Discord's CDN
             const response = await fetch(fileUrl);
             const textContent = await response.text(); // Gets the actual content of the file as a string
+            await interaction.editReply(logLine("String content received! Loading GOISE..."));
+            await interaction.editReply(logLine("Error: Feature incomplete. Check back soon"));
 
-            // For now just assume nothing can be done yet
-            return interaction.reply(`# Sorry, but this feature is not yet available.\n\nCheck later for better luck!`);
+            return;
         } catch (error) {
-            console.error('Error fetching file: ' + error);
-            return interaction.reply({content: 'Failed to fetch file content from URL.', ephemeral: true});
+            await interaction.editReply(logLine("Error: Unable to fetch file"));
+            return;
         }
     },
     echo: (interaction) => {
