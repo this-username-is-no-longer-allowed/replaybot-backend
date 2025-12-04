@@ -140,7 +140,7 @@ async function runCanvasTaskHeadless(replayCode) {
     }
 }
 
-function encodeVideoLocally(array, id) {
+async function encodeVideoLocally(array, id) {
     return new Promise((resolve, reject) => {
         const fileName = `vid-${id}.mp4`;
         const filePath = path.join(DIRNAME, fileName);
