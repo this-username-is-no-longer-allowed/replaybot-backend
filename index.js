@@ -15,7 +15,12 @@ const CLIENT_ID = process.env.CLIENT_ID || '';
 const CANVAS_TASK_URL = process.env.CANVAS_TASK_URL || '';
 const APP_URL = process.env.RENDER_EXTERNAL_URL || '';
 const GUILD_ID = process.env.GUILD_ID || ''; 
-const PORT = process.env.PORT || 3000; // Use Render's port or default to 3000
+const PORT = process.env.PORT // Use Render's port or default to 3000
+
+if (!PORT) {
+    console.error("[FATAL] Environment variable PORT is missing. Cannot start server.");
+    process.exit(1);
+}
 
 // File path setup
 const FILENAME = fileURLToPath(import.meta.url);
