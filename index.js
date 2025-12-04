@@ -89,6 +89,7 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
+                '--disable-gpu'
             ],
             timeout: 300000
         });
