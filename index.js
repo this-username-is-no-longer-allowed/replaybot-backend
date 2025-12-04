@@ -174,7 +174,7 @@ async function encodeVideoLocally(array, id) {
                         })();
                     }, 3600000);
                     resolve(publicUrl);
-                }
+                })();
             });
 
             // Streaming loop: push data from array into pipe
