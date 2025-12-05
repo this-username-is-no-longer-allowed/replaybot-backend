@@ -89,7 +89,8 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
-                '--disable-gpu'
+                '--use-gl=swiftshader',
+                '--enable-webgl'
             ],
             timeout: 300000
         });
@@ -116,7 +117,12 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
         await interaction.editReply(logLine("GOISE content received! Loading..."));
 
         // Wait for it to finish loading by checking for the loading screen to be hidden
-        await page.waitForFunction(() => window.isLoaded === true, { timeout: 300000 });
+        try {
+            await page.waitForFunction(() => window.isLoaded === true, { timeout: 300000 });
+        } catch (error) {
+            await interaction.editReply(logLine("Error: Did not receive handshake"));
+            return [];
+        }
 
         // Step 3: tell html script to initiate computation
         await interaction.editReply(logLine("GOISE loaded! Starting computation..."));
