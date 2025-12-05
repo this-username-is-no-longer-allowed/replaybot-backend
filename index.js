@@ -113,7 +113,7 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
         await page.waitForFunction(() => {
             const loadingScreen = document.getElementById('loading');
             return loadingScreen?.hidden === true;
-        }, { timeout: 60000 });
+        }, { timeout: 300000 });
 
         // Step 3: tell html script to initiate computation
         await interaction.editReply(logLine("GOISE loaded! Starting computation..."));
