@@ -210,7 +210,7 @@ const client = new Client({
 });
 const Commands = {
     goiseencode: async (interaction) => {
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
         interaction.editReply(logLine("Request received! Processing..."));
         const seed = interaction.id;
         QUEUE.push(seed);
