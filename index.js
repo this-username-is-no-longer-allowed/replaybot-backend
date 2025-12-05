@@ -251,7 +251,7 @@ const Commands = {
             const textContent = await response.text(); // Gets the actual content of the file as a string
             await interaction.editReply(logLine("String content received!"));
             
-            const frames = runCanvasTaskHeadless(textContent, interaction);
+            const frames = await runCanvasTaskHeadless(textContent, interaction);
             if (frames.length === 0) {
                 await interaction.editReply(logLine("Error: Null replay code file"));
                 return;
