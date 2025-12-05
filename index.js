@@ -96,6 +96,12 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
         await interaction.editReply(logLine("Puppeteer launched! Creating new window..."));
 
         const page = await browser.newPage();
+
+        // Listen for front-end errors here to debug crashes
+        page.on('pageerror', async (error) => {
+            await interaction.editReply(logLine("Error: " + error.message));
+        });
+        
         // Step 1: pass input data before evaluation
         await page.evaluateOnNewDocument(data => {
             window.taskInputData = data;
