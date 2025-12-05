@@ -102,6 +102,14 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
         page.on('pageerror', async (error) => {
             await interaction.editReply(logLine("Error: " + error.message));
         });
+        // Listen for console messages too
+        page.on('console', message => {
+            console.log(`[BROWSER CONSOLE] ${message.type()}: ${message.text()}`);
+        });
+        // Listen for failed http requests
+        page.on('requestfailed', request => {
+            console.error(`[NETWORK FAIL] ${request.url()} - ${request.failure().errorText}`);
+        });
         
         // Step 1: pass input data before evaluation
         await page.evaluateOnNewDocument(data => {
