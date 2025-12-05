@@ -220,13 +220,6 @@ const client = new Client({
 });
 const Commands = {
     goiseencode: async (interaction) => {
-        try {
-            await interaction.deferReply();
-        } catch (error) {
-            console.error("[FATAL] Deferral error: " + error.message);
-            return;
-        }
-        
         logLines = [];
         interaction.editReply(logLine("Request received! Processing..."));
         const seed = interaction.id;
@@ -271,10 +264,10 @@ const Commands = {
     },
     echo: (interaction) => {
         const input = interaction.options.getString('input');
-        return interaction.reply(`You said: ${input}`);
+        return interaction.editReply({ content: `You said: ${input}` });
     },
     guessage: (interaction) => {
-        return interaction.reply(`Guess: **${Math.round(100 * Math.random())}**.`);
+        return interaction.editReply({ content: `Guess: **${Math.round(100 * Math.random())}**.` });
     },
 };
 
@@ -333,6 +326,13 @@ client.on('interactionCreate', async interaction => {
     console.log(`[INTERACTION] Interaction ID: ${interaction.id} Listener count: ${listenerCount}`);
     
     if (!interaction.isChatInputCommand()) return;
+
+    try {
+        await interaction.deferReply();
+    } catch (e) {
+        console.error("[DUPLICATE] Interaction already claimed. Aborting this instance.");
+        return;
+    }
 
     const commandHandler = Commands[interaction.commandName]; // This is the actual logic that generates the response
 
