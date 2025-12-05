@@ -152,8 +152,8 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
 }
 
 async function encodeVideoLocally(array, id) {
-    return new Promise((resolve, reject) => {
-        (async (resolve, reject) => {
+    return new Promise((resolve, reject, interaction) => {
+        (async (resolve, reject, interaction) => {
             const fileName = `vid-${id}.mp4`;
             const filePath = path.join(DIRNAME, fileName);
 
@@ -196,7 +196,7 @@ async function encodeVideoLocally(array, id) {
             }
             await interaction.editReply(logLine("Conversion complete!"));
             inputPipe.end();
-        })(resolve, reject);
+        })(resolve, reject, interaction);
     });
 }
 
@@ -249,7 +249,7 @@ const Commands = {
                 await interaction.editReply(logLine("Error: Null replay code file"));
                 return;
             }
-            const video = await encodeVideoLocally(frames, seed);
+            const video = await encodeVideoLocally(frames, seed, interaction);
 
             await interaction.editReply(logLine("Preparing to send video..."));
             
