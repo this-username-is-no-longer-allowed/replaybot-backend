@@ -323,6 +323,9 @@ client.on('error', e => {
 
 // Event: Interaction (Slash Command) received
 client.on('interactionCreate', async interaction => {
+    const listenerCount = client.listenerCount('interactionCreate');
+    console.log(`[INTERACTION] Interaction ID: ${interaction.id} Listener count: ${listenerCount}`);
+    
     if (!interaction.isChatInputCommand()) return;
 
     const commandHandler = Commands[interaction.commandName]; // This is the actual logic that generates the response
