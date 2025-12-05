@@ -157,9 +157,10 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
     }
 }
 
-async function encodeVideoLocally(array, id) {
-    return new Promise((resolve, reject, interaction) => {
-        (async (resolve, reject, interaction) => {
+async function encodeVideoLocally(array, id, transferInteraction) {
+    var interaction = transferInteraction;
+    return new Promise((resolve, reject) => {
+        (async (resolve, reject) => {
             const fileName = `vid-${id}.mp4`;
             const filePath = path.join(DIRNAME, fileName);
 
@@ -202,7 +203,7 @@ async function encodeVideoLocally(array, id) {
             }
             await interaction.editReply(logLine("Conversion complete!"));
             inputPipe.end();
-        })(resolve, reject, interaction);
+        })(resolve, reject);
     });
 }
 
