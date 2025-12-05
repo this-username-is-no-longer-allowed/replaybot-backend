@@ -216,6 +216,8 @@ const Commands = {
             console.error("[FATAL] Deferral error: " + error.message);
             return;
         }
+        
+        logLines = [];
         interaction.editReply(logLine("Request received! Processing..."));
         const seed = interaction.id;
         QUEUE.push(seed);
