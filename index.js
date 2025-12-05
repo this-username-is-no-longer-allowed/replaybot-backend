@@ -372,4 +372,4 @@ httpServer.listen(PORT, () => {
 });*/
 
 // Log in to Discord
-client.login(BOT_TOKEN);
+// client.login(BOT_TOKEN);
