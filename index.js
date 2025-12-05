@@ -210,7 +210,12 @@ const client = new Client({
 });
 const Commands = {
     goiseencode: async (interaction) => {
-        await interaction.deferReply();
+        try {
+            await interaction.deferReply();
+        } catch (error) {
+            console.error("[FATAL] Deferral error: " + error.message);
+            return;
+        }
         interaction.editReply(logLine("Request received! Processing..."));
         const seed = interaction.id;
         QUEUE.push(seed);
