@@ -8,4 +8,5 @@ RUN npm install
 COPY . .
 RUN chown -R pptruser:pptruser /usr/src/app
 USER pptruser
-CMD [ "node", "index.js" ]
+# CMD [ "node", "index.js" ]
+CMD [ "echo", "disabled" ]
