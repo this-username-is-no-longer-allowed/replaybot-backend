@@ -95,7 +95,7 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
                 '--disable-default-apps',
                 '--disable-sync',
                 '--mute-audio',
-                '--js-flags="--max-old-space-size=4096"'
+                '--js-flags="--max-old-space-size=4096"',
                 '--enable-webgl'
             ],
             timeout: 300000
