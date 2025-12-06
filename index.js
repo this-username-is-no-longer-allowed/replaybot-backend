@@ -198,19 +198,21 @@ async function encodeVideoLocally(array, id, transferInteraction) {
             });
 
             command.on('end', () => {
-                (async () => {
+                (async (interaction) => {
                     await interaction.editReply(logLine("Ffmpeg encoding complete! Saving to disk.."));
                     const publicUrl = `${APP_URL}/${fileName}`;
                     setTimeout(() => {
                         (async () => {
                             if (fs.existsSync(filePath)) {
                                 fs.unlinkSync(filePath); 
-                                await interaction.editReply(logLine("Warning: Video expired and removed from servers. Video embed may disappear at any time."));
                             }
                         })();
                     }, 3600000);
+                    await interaction.editReply(logLine("Saved!"));
+                    await interaction.editReply(logLine("Warning: Videos only stay up for an hour. They may become invisible at any point after that. This is simply to keep spare space."));
+                    
                     resolve(publicUrl);
-                })();
+                })(interaction);
             });
 
             // Streaming loop: push data from array into pipe
