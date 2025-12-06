@@ -39,7 +39,7 @@ if (!PORT) {
 // File path setup
 const FILENAME = fileURLToPath(import.meta.url);
 const DIRNAME = path.dirname(FILENAME);
-const goiseRunnerPath = 'https://this-username-is-no-longer-allowed.github.io/replaybot-backend/gamefiles/goise.html';
+const goiseRunnerPath = 'file://gamefiles/goise.html';
 // const appelRunnerPath = path.join(DIRNAME, 'gamefiles/appel.html');
 
 if (!fs.existsSync(goiseRunnerPath)) fs.mkdirSync(goiseRunnerPath, { recursive: true });
