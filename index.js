@@ -275,7 +275,7 @@ const Commands = {
 
             await interaction.editReply(logLine("Preparing to send video..."));
             
-            await interaction.editReply({ content: `${logLine("Video send imminent!")}\n[Replay Video](${video})` });
+            await interaction.editReply({ content: `${logLine("Video send imminent!").content}\n[Replay Video](${video})` });
         } catch (error) {
             await interaction.editReply(logLine("Error: Unable to fetch file"));
             return;
