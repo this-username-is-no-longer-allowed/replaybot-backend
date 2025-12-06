@@ -46,7 +46,7 @@ if (!fs.existsSync(goiseRunnerPath)) fs.mkdirSync(goiseRunnerPath, { recursive: 
 
 // Express Server
 const app = express();
-app.use(express.static(goiseRunnerPath));
+app.use(express.static(process.cwd()));
 console.log(`[SERVER] Instance ${BOOT_ID} is attempting to claim port ${PORT}`);
 const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`[System] File server ready on port ${PORT}`);
@@ -181,13 +181,15 @@ async function encodeVideoLocally(array, id, transferInteraction) {
         (async (resolve, reject) => {
             const fileName = `vid-${id}.mp4`;
             const filePath = path.join(DIRNAME, fileName);
+            const stream = new PassThrough();
 
             await interaction.editReply(logLine("Starting ffmpeg encoding..."));
             const command = ffmpeg()
-                .input('pipe:')
-                .inputOptions(['-f', 'image2pipe', '-r', '30'])
+                .input(stream)
+                .inputFormat('image2pipe')
+                .inputFPS(30)
                 .videoCodec('libx264')
-                .outputOptions(['-pix_fmt', 'yuv420p', '-r', '30', '-movflags', 'faststart'])
+                .outputOptions(['-pix_fmt yuv420p', '-preset ultrafast', '-crf 28', '-movflags faststart'])
                 .save(filePath);
 
             command.on('error', e => {
@@ -198,8 +200,8 @@ async function encodeVideoLocally(array, id, transferInteraction) {
             });
 
             command.on('end', () => {
-                (async (interaction) => {
-                    await interaction.editReply(logLine("Ffmpeg encoding complete! Saving to disk.."));
+                (async () => {
+                    await interaction.editReply(logLine("Ffmpeg encoding complete! Saving to disk..."));
                     const publicUrl = `${APP_URL}/${fileName}`;
                     setTimeout(() => {
                         (async () => {
@@ -212,17 +214,16 @@ async function encodeVideoLocally(array, id, transferInteraction) {
                     await interaction.editReply(logLine("Warning: Videos only stay up for an hour. They may become invisible at any point after that. This is simply to keep spare space."));
                     
                     resolve(publicUrl);
-                })(interaction);
+                })();
             });
 
             // Streaming loop: push data from array into pipe
-            const inputPipe = command.pipe();
             await interaction.editReply(logLine("Converting Base 64 PNG images to Buffer..."));
             for (const frameBase64 of array) {
-                inputPipe.write(base64ToBuffer(frameBase64));
+                stream.write(base64ToBuffer(frameBase64));
             }
             await interaction.editReply(logLine("Conversion complete!"));
-            inputPipe.end();
+            stream.end();
         })(resolve, reject);
     });
 }
