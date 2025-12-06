@@ -339,7 +339,7 @@ client.on('interactionCreate', async interaction => {
     const listenerCount = client.listenerCount('interactionCreate');
     console.log(`[INTERACTION] Interaction ID: ${interaction.id} Listener count: ${listenerCount}`);
     
-    if (!interaction.isChatInputCommand()) return;
+    // if (!interaction.isChatInputCommand()) return;
 
     try {
         await interaction.deferReply();
