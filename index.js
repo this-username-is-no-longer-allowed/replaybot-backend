@@ -142,7 +142,7 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
         // Step 3: tell html script to initiate computation
         await interaction.editReply(logLine("GOISE loaded! Starting computation..."));
         await page.evaluate(() => {
-            window.startComputation();
+            window.receiveData();
         });
 
         // Step 4: target location to receive output when ready
