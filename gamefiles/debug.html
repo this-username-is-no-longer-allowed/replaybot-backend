@@ -12,10 +12,10 @@
       const canvas = document.getElementById('frame');
       const ctx = canvas.getContext('2d');
       let uris = '';
-      window.receiveData = input => {
+      window.receiveData = () => {
         ctx.font = '20px Arial';
         ctx.fillStyle = 'black';
-        ctx.fillText(input, 50, 50);
+        ctx.fillText(window.taskInputData, 50, 50);
         for (let i = 0; i < 60; i++) {
           ctx.fillRect(30, 140, 30 + 5 * i, 170);
           uris += canvas.toDataURL('image/png') + ' ';
