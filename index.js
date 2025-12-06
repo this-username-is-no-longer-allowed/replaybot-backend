@@ -12,6 +12,7 @@ import path from 'path'; // More imports
 import { fileURLToPath } from 'url'; // THIS IMPORT IS CRITICAL
 import puppeteer from 'puppeteer';
 import express from 'express';
+import { PassThrough } from 'stream';
 
 // Error handling
 process.on('uncaughtException', e => {
