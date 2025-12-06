@@ -98,6 +98,7 @@ async function runCanvasTaskHeadless(replayCode, interaction) {
                 '--js-flags="--max-old-space-size=4096"',
                 '--enable-webgl'
             ],
+            dumpio: true,
             timeout: 300000
         });
         await interaction.editReply(logLine("Puppeteer launched! Creating new window..."));
@@ -349,7 +350,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     const commandHandler = Commands[interaction.commandName]; // This is the actual logic that generates the response
-
+    console.log(`[DEBUG] Requested command: ${interaction.commandName}, loaded commands: ${Object.keys(Commands)}, function loaded: ${commandHandler}`);
     if (commandHandler) {
         try {
             await commandHandler(interaction);
